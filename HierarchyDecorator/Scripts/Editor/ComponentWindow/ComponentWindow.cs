@@ -43,6 +43,7 @@ public class ComponentWindow : EditorWindow
 
         var scrollView = new ScrollView();
         rootVisualElement.Add(scrollView);
+        scrollView.StretchToParentSize();
 
         editor = Editor.CreateEditor(component);
         var root = editor.CreateInspectorGUI();
