@@ -53,7 +53,6 @@ namespace HierarchyDecorator
             for (int i = 0; i < components.Length; i++)
             {
                 Component component = components[i];
-                Behaviour behaviour = component as Behaviour;
 
                 if (component == null & settings.Components.ShowMissingScriptWarning)
                 {
@@ -89,12 +88,12 @@ namespace HierarchyDecorator
 
                 if (componentType.IsBuiltIn)
                 {
-                    DrawComponent(rect, componentType, settings, behaviour);
+                    DrawComponent(rect, componentType, settings, component);
                 }
                 else
                 if (!stackScripts)
                 {
-                    DrawMonobehaviour(rect, type, componentType, settings, behaviour);
+                    DrawMonobehaviour(rect, type, componentType, settings, component);
                 }
                 else
                 {
@@ -145,7 +144,7 @@ namespace HierarchyDecorator
 
         // GUI
 
-        private void DrawMonobehaviour(Rect rect, Type type, ComponentType componentType, Settings settings, Behaviour behaviour)
+        private void DrawMonobehaviour(Rect rect, Type type, ComponentType componentType, Settings settings, Component component)
         {
             if (!settings.Components.DisplayMonoScripts)
             {
@@ -161,10 +160,10 @@ namespace HierarchyDecorator
             }
 
             componentTypes.Add(type);
-            DrawComponentIcon(rect, componentType.Content, behaviour, settings);
+            DrawComponentIcon(rect, componentType.Content, component, settings);
         }
 
-        private void DrawComponent(Rect rect, ComponentType component, Settings settings, Behaviour behaviour)
+        private void DrawComponent(Rect rect, ComponentType component, Settings settings, Component componentInstance)
         {
             if (!settings.Components.DisplayBuiltIn)
             {
@@ -175,10 +174,10 @@ namespace HierarchyDecorator
             }
 
             componentTypes.Add(component.Type);
-            DrawComponentIcon(rect, component.Content, behaviour, settings);
+            DrawComponentIcon(rect, component.Content, componentInstance, settings);
         }
 
-        private void DrawComponentIcon(Rect rect, GUIContent content, Behaviour behaviour, Settings settings)
+        private void DrawComponentIcon(Rect rect, GUIContent content, Component component, Settings settings)
         {
             rect = GetIconPosition (rect);
 
@@ -187,15 +186,24 @@ namespace HierarchyDecorator
                 return;
             }
 
+            Behaviour behaviour = component as Behaviour;
+
             Color oldCol = GUI.color;
 
             if (behaviour && !behaviour.enabled && settings.Components.GrayedIcon)
                 GUI.color = Color.gray;
 
-            if(GUI.Button (rect, content, Style.ComponentIconStyle))
+            if (GUI.Button (rect, content, Style.ComponentIconStyle))
             {
-                if(behaviour && settings.Components.ClickToToggle)
-                    behaviour.enabled = !behaviour.enabled;
+                if (component && EditorGUI.actionKey)
+                {
+                    ComponentWindow.ShowComponent(component); 
+                }
+                else
+                {
+                    if (behaviour && settings.Components.ClickToToggle)
+                        behaviour.enabled = !behaviour.enabled;
+                }
             }
 
             GUI.color = oldCol;

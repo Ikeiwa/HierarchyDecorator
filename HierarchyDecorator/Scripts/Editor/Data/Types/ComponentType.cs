@@ -219,6 +219,8 @@ namespace HierarchyDecorator
 
             content.image = texture;
 
+            content.tooltip = displayName;
+
             return content;
         }
 
