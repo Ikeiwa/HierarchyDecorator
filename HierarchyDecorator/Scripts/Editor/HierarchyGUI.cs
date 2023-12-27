@@ -35,6 +35,13 @@ namespace HierarchyDecorator
 
             GUIContent content = GetStandardContent (rect, instance, isPrefab && isPrefabParent);
 
+            Texture customIcon = EditorGUIUtility.GetIconForObject(instance);
+            if (customIcon)
+            {
+                content = new GUIContent(content);
+                content.image = customIcon;
+            }
+
             // Handle colours
 
             Color textColour = EditorStyles.label.normal.textColor;
