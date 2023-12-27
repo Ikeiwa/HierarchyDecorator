@@ -14,9 +14,10 @@ public class ComponentWindow : EditorWindow
         if (!component)
             return;
 
-        ComponentWindow wnd = GetWindow<ComponentWindow>();
-        wnd.titleContent = new GUIContent(component.name);
+        ComponentWindow wnd = CreateInstance<ComponentWindow>();
+        wnd.titleContent = new GUIContent(component.name + " - " + component.GetType().Name);
         wnd.component = component;
+        wnd.Show();
     }
 
     private void Update()
@@ -40,18 +41,16 @@ public class ComponentWindow : EditorWindow
             return;
         }
 
+        var scrollView = new ScrollView();
+        rootVisualElement.Add(scrollView);
+
         editor = Editor.CreateEditor(component);
         var root = editor.CreateInspectorGUI();
 
         if(root == null)
-        {
-            root = rootVisualElement;
-
-            var scrollView = new ScrollView();
-            root.Add(scrollView);
-
             scrollView.Add(new IMGUIContainer(OnGUIHandler));
-        }
+        else
+            scrollView.Add(root);
     }
 
     private void OnGUIHandler()
