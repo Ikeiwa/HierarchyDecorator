@@ -61,6 +61,8 @@ namespace HierarchyDecorator
         // --- Settings
 
         [SerializeField] private bool enableIcons = true;
+        [SerializeField] private bool grayedDisabledComponents = true;
+        [SerializeField] private bool clickToToggleComponent = true;
 
         [SerializeField] private bool showMissingScriptWarning = true;
         [SerializeField] private DisplayMode showAll = DisplayMode.Unity | DisplayMode.Custom;
@@ -100,6 +102,10 @@ namespace HierarchyDecorator
         /// Are components enabled?
         /// </summary>
         public bool Enabled => enableIcons;
+
+        public bool ClickToToggle => clickToToggleComponent;
+
+        public bool GrayedIcon => grayedDisabledComponents;
 
         /// <summary>
         /// How scripts are drawn in the hierarchy.

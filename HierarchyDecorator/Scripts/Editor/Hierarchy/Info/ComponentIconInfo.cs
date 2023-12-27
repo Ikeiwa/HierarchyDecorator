@@ -109,7 +109,7 @@ namespace HierarchyDecorator
                     tooltip = stackOutput.Trim()
                 };
 
-                DrawComponentIcon(rect, content, null);
+                DrawComponentIcon(rect, content, null, settings);
             }
 
             bool GetComponent(Type type, out ComponentType componentType)
@@ -161,7 +161,7 @@ namespace HierarchyDecorator
             }
 
             componentTypes.Add(type);
-            DrawComponentIcon(rect, componentType.Content, behaviour);
+            DrawComponentIcon(rect, componentType.Content, behaviour, settings);
         }
 
         private void DrawComponent(Rect rect, ComponentType component, Settings settings, Behaviour behaviour)
@@ -175,10 +175,10 @@ namespace HierarchyDecorator
             }
 
             componentTypes.Add(component.Type);
-            DrawComponentIcon(rect, component.Content, behaviour);
+            DrawComponentIcon(rect, component.Content, behaviour, settings);
         }
 
-        private void DrawComponentIcon(Rect rect, GUIContent content, Behaviour behaviour)
+        private void DrawComponentIcon(Rect rect, GUIContent content, Behaviour behaviour, Settings settings)
         {
             rect = GetIconPosition (rect);
 
@@ -189,12 +189,12 @@ namespace HierarchyDecorator
 
             Color oldCol = GUI.color;
 
-            if (behaviour && !behaviour.enabled)
+            if (behaviour && !behaviour.enabled && settings.Components.GrayedIcon)
                 GUI.color = Color.gray;
 
             if(GUI.Button (rect, content, Style.ComponentIconStyle))
             {
-                if(behaviour)
+                if(behaviour && settings.Components.ClickToToggle)
                     behaviour.enabled = !behaviour.enabled;
             }
 
