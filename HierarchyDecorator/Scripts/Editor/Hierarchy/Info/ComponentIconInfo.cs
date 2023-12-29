@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -24,6 +25,8 @@ namespace HierarchyDecorator
 #else
         private GUIContent warningGUI = EditorGUIUtility.IconContent ("console.warnicon");
 #endif
+
+        static Action<Rect, UnityEngine.Object, int> DisplayObjectContextMenuDelegate;
 
         protected override int GetGridCount()
         {
@@ -140,6 +143,15 @@ namespace HierarchyDecorator
             components = instance.GetComponents<Component> ();
             componentTypes.Clear ();
             hasMonoBehaviour = false;
+
+            if(DisplayObjectContextMenuDelegate == null)
+            {
+                MethodInfo DisplayObjectContextMenu = typeof(EditorUtility).GetMethods(BindingFlags.Static | BindingFlags.NonPublic).Single
+                (
+                    method => method.Name == nameof(DisplayObjectContextMenu) && method.GetParameters()[1].ParameterType == typeof(UnityEngine.Object)
+                );
+                DisplayObjectContextMenuDelegate = Delegate.CreateDelegate(typeof(Action<Rect, UnityEngine.Object, int>), DisplayObjectContextMenu) as Action<Rect, UnityEngine.Object, int>;
+            }
         }
 
         // GUI
@@ -195,7 +207,11 @@ namespace HierarchyDecorator
 
             if (GUI.Button (rect, content, Style.ComponentIconStyle))
             {
-                if (component && EditorGUI.actionKey)
+                if(Event.current.button == 1)
+                {
+                    DisplayObjectContextMenuDelegate(rect, component, 0);
+                }
+                else if (component && EditorGUI.actionKey)
                 {
                     ComponentWindow.ShowComponent(component); 
                 }
